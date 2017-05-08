@@ -20,13 +20,17 @@ public class TerminalClientRMI {
         Scanner scan = new Scanner(System.in);
         GalgeServiceI gs ;
         try{
-            gs =(GalgeServiceI) Naming.lookup("rmi://localhost/Galgelogiktjeneste");
+            //ubuntu4.javabog.dk:9592/Galgelogiktjeneste
+            String url = "rmi://ubuntu4.javabog.dk:9592/Galgelogiktjeneste";
+
+//            String url = "rmi://"+"80.197.119.219"+"/Galgelogiktjeneste";
+            System.out.println("Opretter forbindelse til :"+url);
+            gs =(GalgeServiceI) Naming.lookup(url);
             System.out.println(gs.sayHello());
             new TerminalClientRMI().run(gs,scan);
         }catch(Exception e){
-            System.out.println("kunne ikke finde serveren");
-        }  
-        
+            System.out.println("Kan ikke oprette forbindelse til serveren");
+        }
         scan.close();
     }
     
