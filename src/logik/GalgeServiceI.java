@@ -27,6 +27,6 @@ public interface GalgeServiceI extends Remote{
     public void gætBogstav(String user, String pass, String bogstav) throws RemoteException;
     public boolean hentBruger(String brugernavn, String password) throws RemoteException;
     public String getFornavn(String user, String pass) throws RemoteException;
-    public List<ScoreDTO> getRankList(String user, String pass) throws RemoteException;
+    public List<ScoreDTO> getRankList() throws RemoteException;
     public int getScore(String user, String pass) throws RemoteException;
 }
