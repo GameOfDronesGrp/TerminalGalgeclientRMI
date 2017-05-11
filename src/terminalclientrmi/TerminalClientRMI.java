@@ -7,6 +7,8 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,11 +27,9 @@ public class TerminalClientRMI {
         try{
             //ubuntu4.javabog.dk:9592/Galgelogiktjeneste
             String url = "rmi://ubuntu4.javabog.dk:9592/Galgelogiktjeneste";
-
-//            String url = "rmi://"+"80.197.119.219"+"/Galgelogiktjeneste";
             System.out.println("Opretter forbindelse til :"+url);
             gs =(GalgeServiceI) Naming.lookup(url);
-            System.out.println(gs.sayHello());
+            
             new TerminalClientRMI().run(gs,scan);
         }catch(Exception e){
             System.out.println("Kan ikke oprette forbindelse til serveren");
@@ -39,9 +39,8 @@ public class TerminalClientRMI {
     
     //menuerne
     void run(GalgeServiceI game, Scanner scan) throws RemoteException{
-        
-        
         int choice;
+        
         while(true){
             if(!loggedIn){
                 System.out.println("1. Log ind");
@@ -50,41 +49,39 @@ public class TerminalClientRMI {
                     choice = (int)Integer.parseInt(scan.nextLine());
                 }catch(NumberFormatException e){
                     System.out.println("Input skal være tal\n");
-                    System.out.println();
-                    choice = 0;
                 }
+                choice = 0;
                 if(choice == 1){
-                        try{
-                            Console console = System.console();
-                            brugernavn = console.readLine("Username: ");
-                            char[] password = console.readPassword("Password: ");
-                            this.password = new String(password);
-                        }catch(Exception e){
-                            System.out.println("Skriv brugernavn");
-                            brugernavn = scan.nextLine();
-                            System.out.println("Skriv kode");
-                            password = scan.nextLine();
-                        }
-                        
-                        if(game.hentBruger(brugernavn, password)){
-                            loggedIn = true;
-                            System.out.printf("Hej %s. Du er nu logget ind!\n\n", game.getFornavn(brugernavn,password));
-                        }else{
-                            loggedIn = false;
-                            System.out.println("\nBrugerinformation var forkert! Prøv igen\n\n");
-                        }
+                    try{
+                        Console console = System.console();
+                        brugernavn = console.readLine("Username: ");
+                        char[] password = console.readPassword("Password: ");
+                        this.password = new String(password);
+                    }catch(Exception e){
+                        System.out.println("Skriv brugernavn");
+                        brugernavn = scan.nextLine();
+                        System.out.println("Skriv kode");
+                        password = scan.nextLine();
+                    }
+
+                    if(game.hentBruger(brugernavn, password)){
+                        loggedIn = true;
+                        System.out.printf("Hej %s. Du er nu logget ind!\n\n", game.getFornavn(brugernavn,password));
+                    }else{
+                        loggedIn = false;
+                        System.out.println("\nBrugerinformation var forkert! Prøv igen\n\n");
+                    }
                 }else if(choice == 2){
                     System.out.println("Programmet lukker ned...");
                     break;
                 }else {
                     System.out.println("Skriv 1 eller 2");
-                }
-                
+                } 
             }else{
                 System.out.println("1. Nyt spil");
-                System.out.println("2. Log ud");
-                System.out.println("3. Se Rank liste");
-                
+                System.out.println("2. Se Rank liste");
+                System.out.println("3. Log ud");
+
                 try{
                     choice = (int) Integer.parseInt(scan.nextLine());
                 }catch(NumberFormatException e){
@@ -98,12 +95,12 @@ public class TerminalClientRMI {
                         spil(game, scan);
                     }  break;
                     case 2: {
-                        System.out.println("Du er nu logget ud");
-                        loggedIn = false;
-                        break;
-                    }case 3:{
                         showRanklist(game);
                         run(game, scan);
+                        break;
+                    }case 3:{
+                        System.out.println("Du er nu logget ud");
+                        loggedIn = false;
                         break;
                     }
                     default: System.out.println("Skriv 1 eller 2");
@@ -118,6 +115,8 @@ public class TerminalClientRMI {
         final int liv = 7;
         game.nulstil(brugernavn, password);
         System.out.println("\n\n- Spillet er startet -");
+        
+        System.out.println("Point:"+game.getScore(brugernavn, password));
         
         while(!game.erSpilletSlut(brugernavn,password)){
             scan.reset();
@@ -148,10 +147,16 @@ public class TerminalClientRMI {
                     System.out.println("Du har tabt, Ordet var: " + game.getOrdet(brugernavn, password));
                 }else if(game.erSpilletVundet(brugernavn, password)){
                     System.out.println("Du har vundet! Ordet var: "+game.getOrdet(brugernavn, password));
-
                 }
             }
         }
+        System.out.println("Point:"+game.getScore(brugernavn, password)+"\n\n");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TerminalClientRMI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
     
     

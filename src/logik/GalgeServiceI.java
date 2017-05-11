@@ -10,10 +10,10 @@ import database.ScoreDTO;
 
 /**
  *
- * @author mohammad
+ * @author gruppen
  */
 public interface GalgeServiceI extends Remote{
-    public String sayHello() throws RemoteException;
+    public String sayHello();
     public ArrayList<String> getBrugteBogstaver(String user, String pass) throws RemoteException;
     public String getSynligtOrd(String user, String pass) throws RemoteException;
     public String getOrdet(String user, String pass) throws RemoteException;
