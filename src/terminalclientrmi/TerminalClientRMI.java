@@ -10,35 +10,29 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author mohammad
- */
 public class TerminalClientRMI {
     
     String brugernavn;
     String password;
     boolean loggedIn = false;
           
-    //main run
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        GalgeServiceI gs ;
+        GalgeServiceI game ;
         try{
-            //ubuntu4.javabog.dk:9592/Galgelogiktjeneste
             String url = "rmi://ubuntu4.javabog.dk:9592/Galgelogiktjeneste";
             System.out.println("Opretter forbindelse til :"+url);
-            gs =(GalgeServiceI) Naming.lookup(url);
-            
-            new TerminalClientRMI().run(gs,scan);
+            game =(GalgeServiceI) Naming.lookup(url);
+            new TerminalClientRMI().visMenuer(game,scan);
         }catch(Exception e){
             System.out.println("Kan ikke oprette forbindelse til serveren");
+            e.printStackTrace();
         }
         scan.close();
     }
     
-    //menuerne
-    void run(GalgeServiceI game, Scanner scan) throws RemoteException{
+    // 
+    void visMenuer(GalgeServiceI game, Scanner scan) throws RemoteException{
         int choice;
         
         while(true){
@@ -92,11 +86,11 @@ public class TerminalClientRMI {
                 switch(choice){
                     case 1: {
                         System.out.println("Point hentet fra server: "+game.getScore(brugernavn, password));
-                        spil(game, scan);
+                        startSpil(game, scan);
                     }  break;
                     case 2: {
                         showRanklist(game);
-                        run(game, scan);
+                        visMenuer(game, scan);
                         break;
                     }case 3:{
                         System.out.println("Du er nu logget ud");
@@ -109,7 +103,7 @@ public class TerminalClientRMI {
         }
     }
     
-    void spil(GalgeServiceI game, Scanner scan) throws RemoteException {
+    void startSpil(GalgeServiceI game, Scanner scan) throws RemoteException {
         
         String gaet;
         final int liv = 7;
