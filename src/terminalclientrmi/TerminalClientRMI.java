@@ -37,6 +37,7 @@ public class TerminalClientRMI {
         
         while(true){
             if(!loggedIn){
+                choice = 0;
                 System.out.println("1. Log ind");
                 System.out.println("2. Afslut");
                 try{
@@ -44,7 +45,6 @@ public class TerminalClientRMI {
                 }catch(NumberFormatException e){
                     System.out.println("Input skal være tal\n");
                 }
-                choice = 0;
                 if(choice == 1){
                     try{
                         Console console = System.console();
